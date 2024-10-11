@@ -4,6 +4,10 @@ import { UserRepository } from './user.repository';
 
 jest.mock('./user.repository');
 
+afterEach(() => {
+    jest.resetAllMocks();
+});
+
 describe('User Controller', () => {
     describe('Create User', () => {
         it('should return error if firstName is not provided', async () => {
@@ -112,10 +116,14 @@ describe('User Controller', () => {
 
             expect(res.status).toEqual(200);
             expect(res.body.message).toEqual('Users fetched successfully');
-        })
+        });
     });
 
     describe('Create Post', () => {
+        afterEach(() => {
+            jest.restoreAllMocks()
+        });
+        
         it('should return error if title is not provided', async () => {
             const post = {
                 id: 1,
@@ -193,10 +201,48 @@ describe('User Controller', () => {
                     title: 'Interview',
                     content: 'Design a database with three tables: Users, Posts, and Comments.'
                 });
-                console.log('resxx --> ', res.body);
 
             expect(res.status).toEqual(201);
             expect(res.body.message).toEqual('Post created successfully');
+        });
+    });
+
+    describe('Get User Posts', () => {
+        it('should return error if user provided does not exist', async () => {
+            const post = {
+                id: 1,
+                title: 'Interview',
+                content: 'Design a database with three tables: Users, Posts, and Comments.',
+                userid: 1
+            };
+
+            const res = await request(app)
+                .get('/users/2/posts')
+                .send();
+                console.log('resxxz --> ', res.body);
+
+            expect(res.status).toEqual(400);
+            expect(res.body.status).toEqual(false);
+            expect(res.body.message).toEqual('User provided does not exist');
+        });
+        
+        it('should fetch all posts of a user successfully', async () => {
+            const post = {
+                id: 1,
+                title: 'Interview',
+                content: 'Design a database with three tables: Users, Posts, and Comments.',
+                userid: 1
+            };
+
+            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(post);
+            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
+
+            const res = await request(app)
+                .get('/users/1/posts')
+                .send();
+
+            expect(res.status).toEqual(200);
+            expect(res.body.message).toEqual('Posts fetched successfully');
         });
     });
 });

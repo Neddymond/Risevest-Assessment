@@ -37,4 +37,13 @@ export class UserRepository {
         const user = await pool.query(query)
         return user.rows[0];
     }
+
+    public static async getUserPosts(userId: Number): Promise<Post[]> {
+        const query = {
+          text: 'SELECT posts.id, posts.title, posts.content, posts.userId FROM posts WHERE userId = $1',
+          values: [userId]
+        }
+        const users = await pool.query(query);
+        return users.rows;
+    };
 }
