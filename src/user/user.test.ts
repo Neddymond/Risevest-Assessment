@@ -89,10 +89,9 @@ describe('User Controller', () => {
                     lastName: 'Ikechi',
                     email: 'neddy@gmail.com'
                 });
-            console.log('resxx --> ', res.body);
 
             expect(res.status).toEqual(201);
-            expect(res.body.data.message).toEqual('User created successfully');
+            expect(res.body.message).toEqual('User created successfully');
         });
     });
 
@@ -112,7 +111,92 @@ describe('User Controller', () => {
                 .send();
 
             expect(res.status).toEqual(200);
-            expect(res.body.data.message).toEqual('Users fetched successfully');
+            expect(res.body.message).toEqual('Users fetched successfully');
         })
+    });
+
+    describe('Create Post', () => {
+        it('should return error if title is not provided', async () => {
+            const post = {
+                id: 1,
+                title: 'Interview',
+                content: 'Design a database with three tables: Users, Posts, and Comments.',
+                userid: 1
+            };
+
+            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
+
+            const res = await request(app)
+                .post('/users/1/posts')
+                .send();
+
+            expect(res.status).toEqual(422);
+            expect(res.body.status).toEqual(false);
+            expect(res.body.message).toEqual('title is required');
+        });
+        
+        it('should return error if content is not provided', async () => {
+            const post = {
+                id: 1,
+                title: 'Interview',
+                content: 'Design a database with three tables: Users, Posts, and Comments.',
+                userid: 1
+            };
+
+            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
+
+            const res = await request(app)
+                .post('/users/1/posts')
+                .send({ title: 'Interview' });
+
+            expect(res.status).toEqual(422);
+            expect(res.body.status).toEqual(false);
+            expect(res.body.message).toEqual('content is required');
+        });
+        
+        it('should return error if user provided does not exist', async () => {
+            const post = {
+                id: 1,
+                title: 'Interview',
+                content: 'Design a database with three tables: Users, Posts, and Comments.',
+                userid: 1
+            };
+
+            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
+
+            const res = await request(app)
+                .post('/users/2/posts')
+                .send({
+                    title: 'Interview',
+                    content: 'Design a database with three tables: Users, Posts, and Comments.'
+                });
+
+            expect(res.status).toEqual(400);
+            expect(res.body.status).toEqual(false);
+            expect(res.body.message).toEqual('User provided does not exist');
+        });
+
+        it('should create a new post successfully', async () => {
+            const post = {
+                id: 1,
+                title: 'Interview',
+                content: 'Design a database with three tables: Users, Posts, and Comments.',
+                userid: 1
+            };
+
+            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(post);
+            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
+
+            const res = await request(app)
+                .post('/users/1/posts')
+                .send({
+                    title: 'Interview',
+                    content: 'Design a database with three tables: Users, Posts, and Comments.'
+                });
+                console.log('resxx --> ', res.body);
+
+            expect(res.status).toEqual(201);
+            expect(res.body.message).toEqual('Post created successfully');
+        });
     });
 });

@@ -20,5 +20,15 @@ export class User {
             return Helpers.sendErrorResponse(res, err.message, 'BAD_REQUEST');
         }
     }
+
+    public static async createPost (req: Request, res: Response) {
+        try {
+            const userId = Number(req.params.id);
+            const user = await UserRepository.createPost(userId, req.body);
+            return Helpers.sendJsonResponse(res, user, 'Post created successfully', 'CREATED');
+        } catch (err) {
+            return Helpers.sendErrorResponse(res, err.message, 'BAD_REQUEST');
+        }
+    }
 }
 

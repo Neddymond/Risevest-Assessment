@@ -8,7 +8,7 @@ export class Helpers {
             message,
             data: content
         };
-        res.status(httpStatus[status]).send({data});
+        res.status(httpStatus[status]).send(data);
     }
 
     static sendErrorResponse(res: Response, message: string, status: string) {
@@ -16,17 +16,6 @@ export class Helpers {
             status: false,
             message
         }
-        res.status(httpStatus[status].send(data));
-        // throw new HttpException(message, httpStatus[status])
+        res.status(httpStatus[status]).send(data);
     }
 }
-
-// export class HttpException extends Error {
-//     public status: number;
-//     public message: string;
-//     constructor(message: string, status: number) {
-//       super(message)
-//       this.status = status
-//       this.message = message
-//     }
-//   }
