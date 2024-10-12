@@ -12,6 +12,8 @@ ENV NODE_ENV=production
 
 RUN npm run build
 
+EXPOSE 10000
+
 RUN apt-get update && apt-get install -y wait-for-it
 
 # Set the script to be executable
