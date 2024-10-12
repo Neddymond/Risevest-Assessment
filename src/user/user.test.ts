@@ -11,15 +11,6 @@ afterEach(() => {
 describe('User Controller', () => {
     describe('Create User', () => {
         it('should return error if firstName is not provided', async () => {
-            const user = {
-                id: 1,
-                firstName: 'Chinedu',
-                lastName: 'Ikechi',
-                email: 'neddy@gmail.com'
-            };
-
-            (UserRepository.createUser as jest.Mock).mockResolvedValue(user);
-
             const res = await request(app)
                 .post('/users')
                 .send({
@@ -33,15 +24,6 @@ describe('User Controller', () => {
         });
         
         it('should return error if lastName is not provided', async () => {
-            const user = {
-                id: 1,
-                firstName: 'Chinedu',
-                lastName: 'Ikechi',
-                email: 'neddy@gmail.com'
-            };
-
-            (UserRepository.createUser as jest.Mock).mockResolvedValue(user);
-
             const res = await request(app)
                 .post('/users')
                 .send({
@@ -55,15 +37,6 @@ describe('User Controller', () => {
         });
         
         it('should return error if email is not provided', async () => {
-            const user = {
-                id: 1,
-                firstName: 'Chinedu',
-                lastName: 'Ikechi',
-                email: 'neddy@gmail.com'
-            };
-
-            (UserRepository.createUser as jest.Mock).mockResolvedValue(user);
-
             const res = await request(app)
                 .post('/users')
                 .send({
@@ -101,14 +74,14 @@ describe('User Controller', () => {
 
     describe('Get Users', () => {
         it('should fetch all users successfully', async () => {
-            const user = {
+            const users = [{
                 id: 1,
                 firstName: 'Chinedu',
                 lastName: 'Ikechi',
                 email: 'neddy@gmail.com'
-            };
+            }];
 
-            (UserRepository.createUser as jest.Mock).mockResolvedValue(user);
+            (UserRepository.createUser as jest.Mock).mockResolvedValue(users);
 
             const res = await request(app)
                 .get('/users')
@@ -120,20 +93,7 @@ describe('User Controller', () => {
     });
 
     describe('Create Post', () => {
-        afterEach(() => {
-            jest.restoreAllMocks()
-        });
-        
         it('should return error if title is not provided', async () => {
-            const post = {
-                id: 1,
-                title: 'Interview',
-                content: 'Design a database with three tables: Users, Posts, and Comments.',
-                userid: 1
-            };
-
-            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
-
             const res = await request(app)
                 .post('/users/1/posts')
                 .send();
@@ -144,15 +104,6 @@ describe('User Controller', () => {
         });
         
         it('should return error if content is not provided', async () => {
-            const post = {
-                id: 1,
-                title: 'Interview',
-                content: 'Design a database with three tables: Users, Posts, and Comments.',
-                userid: 1
-            };
-
-            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
-
             const res = await request(app)
                 .post('/users/1/posts')
                 .send({ title: 'Interview' });
@@ -163,15 +114,6 @@ describe('User Controller', () => {
         });
         
         it('should return error if user provided does not exist', async () => {
-            const post = {
-                id: 1,
-                title: 'Interview',
-                content: 'Design a database with three tables: Users, Posts, and Comments.',
-                userid: 1
-            };
-
-            (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
-
             const res = await request(app)
                 .post('/users/2/posts')
                 .send({
@@ -185,6 +127,13 @@ describe('User Controller', () => {
         });
 
         it('should create a new post successfully', async () => {
+            const user = {
+                id: 1,
+                firstName: 'Chinedu',
+                lastName: 'Ikechi',
+                email: 'neddy@gmail.com'
+            };
+
             const post = {
                 id: 1,
                 title: 'Interview',
@@ -192,7 +141,7 @@ describe('User Controller', () => {
                 userid: 1
             };
 
-            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(post);
+            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(user);
             (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
 
             const res = await request(app)
@@ -209,13 +158,6 @@ describe('User Controller', () => {
 
     describe('Get User Posts', () => {
         it('should return error if user provided does not exist', async () => {
-            const post = {
-                id: 1,
-                title: 'Interview',
-                content: 'Design a database with three tables: Users, Posts, and Comments.',
-                userid: 1
-            };
-
             const res = await request(app)
                 .get('/users/2/posts')
                 .send();
@@ -227,6 +169,13 @@ describe('User Controller', () => {
         });
         
         it('should fetch all posts of a user successfully', async () => {
+            const user = {
+                id: 1,
+                firstName: 'Chinedu',
+                lastName: 'Ikechi',
+                email: 'neddy@gmail.com'
+            };
+
             const post = {
                 id: 1,
                 title: 'Interview',
@@ -234,7 +183,7 @@ describe('User Controller', () => {
                 userid: 1
             };
 
-            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(post);
+            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(user);
             (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
 
             const res = await request(app)
