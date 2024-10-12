@@ -1,5 +1,8 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
+import jwt from 'jsonwebtoken';
+import { configService } from '../config/config.service';
+import { User } from '../interfaces/user.interface';
 
 export class Helpers {
     static sendJsonResponse(res: Response, content: any, message: string, status: string) {
@@ -17,5 +20,10 @@ export class Helpers {
             message
         }
         res.status(httpStatus[status]).send(data);
+    }
+
+    static createAuthToken({ id, email }: User) {
+        const secretKey = configService.getValue('TOKEN_SECRET');
+        return jwt.sign({ id, email }, secretKey);
     }
 }

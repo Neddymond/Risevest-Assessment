@@ -11,10 +11,10 @@ export class PostRepository {
         return post.rows[0];
     }
 
-    static async createComment(postId: Number, payload: Post): Promise<Post> {
+    static async createComment(postId: Number, payload: Post, userId: Number): Promise<Post> {
         const query = {
             text: 'INSERT INTO comments(content, postId, userId) VALUES($1, $2, $3) RETURNING *',
-            values: [payload.content, postId, 1],
+            values: [payload.content, postId, userId],
         }
         const user = await pool.query(query)
         return user.rows[0];

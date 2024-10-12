@@ -1,14 +1,23 @@
+import jwt from 'jsonwebtoken';
 import request from 'supertest'
 import app from '../app'
 import { UserRepository } from './user.repository';
 
 jest.mock('./user.repository');
+jest.mock('jsonwebtoken');
 
 afterEach(() => {
     jest.resetAllMocks();
 });
 
 describe('User Controller', () => {
+    const token = 'Bearer randomauthtoken';
+    const decodedToken = {
+        id: 1,
+        email: 'neddy@gmail.com',
+        iat: 1728727627
+    }
+
     describe('Create User', () => {
         it('should return error if firstName is not provided', async () => {
             const res = await request(app)
@@ -54,7 +63,7 @@ describe('User Controller', () => {
                 id: 1,
                 firstName: 'Chinedu',
                 lastName: 'Ikechi',
-                email: 'neddy@gmail.com'
+                email: 'neddy@gmail.com',
             };
 
             (UserRepository.createUser as jest.Mock).mockResolvedValue(user);
@@ -64,9 +73,9 @@ describe('User Controller', () => {
                 .send({
                     firstName: 'Chinedu',
                     lastName: 'Ikechi',
-                    email: 'neddy@gmail.com'
+                    email: 'neddy@gmail.com',
+                    password: '12345'
                 });
-
             expect(res.status).toEqual(201);
             expect(res.body.message).toEqual('User created successfully');
         });
@@ -81,10 +90,12 @@ describe('User Controller', () => {
                 email: 'neddy@gmail.com'
             }];
 
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
             (UserRepository.createUser as jest.Mock).mockResolvedValue(users);
 
             const res = await request(app)
                 .get('/users')
+                .set({ Authorization: token })
                 .send();
 
             expect(res.status).toEqual(200);
@@ -94,8 +105,11 @@ describe('User Controller', () => {
 
     describe('Create Post', () => {
         it('should return error if title is not provided', async () => {
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+
             const res = await request(app)
                 .post('/users/1/posts')
+                .set({ Authorization: token })
                 .send();
 
             expect(res.status).toEqual(422);
@@ -104,8 +118,11 @@ describe('User Controller', () => {
         });
         
         it('should return error if content is not provided', async () => {
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+
             const res = await request(app)
                 .post('/users/1/posts')
+                .set({ Authorization: token })
                 .send({ title: 'Interview' });
 
             expect(res.status).toEqual(422);
@@ -114,8 +131,11 @@ describe('User Controller', () => {
         });
         
         it('should return error if user provided does not exist', async () => {
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+
             const res = await request(app)
                 .post('/users/2/posts')
+                .set({ Authorization: token })
                 .send({
                     title: 'Interview',
                     content: 'Design a database with three tables: Users, Posts, and Comments.'
@@ -141,11 +161,13 @@ describe('User Controller', () => {
                 userid: 1
             };
 
-            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(user);
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+            (UserRepository.getUser as jest.Mock).mockResolvedValue(user);
             (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
 
             const res = await request(app)
                 .post('/users/1/posts')
+                .set({ Authorization: token })
                 .send({
                     title: 'Interview',
                     content: 'Design a database with three tables: Users, Posts, and Comments.'
@@ -158,8 +180,11 @@ describe('User Controller', () => {
 
     describe('Get User Posts', () => {
         it('should return error if user provided does not exist', async () => {
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+
             const res = await request(app)
                 .get('/users/2/posts')
+                .set({ Authorization: token })
                 .send();
 
             expect(res.status).toEqual(400);
@@ -182,11 +207,13 @@ describe('User Controller', () => {
                 userid: 1
             };
 
-            (UserRepository.getUserbyId as jest.Mock).mockResolvedValue(user);
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+            (UserRepository.getUser as jest.Mock).mockResolvedValue(user);
             (UserRepository.createPost as jest.Mock).mockResolvedValue(post);
 
             const res = await request(app)
                 .get('/users/1/posts')
+                .set({ Authorization: token })
                 .send();
 
             expect(res.status).toEqual(200);
@@ -213,10 +240,12 @@ describe('User Controller', () => {
                 }
             ];
 
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
             (UserRepository.getTopUsers as jest.Mock).mockResolvedValue(topUsers);
 
             const res = await request(app)
                 .get('/users/topUsers')
+                .set({ Authorization: token })
                 .send();
 
             expect(res.status).toEqual(200);

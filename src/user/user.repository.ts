@@ -1,12 +1,12 @@
 import { Post } from '../interfaces/post.interface';
 import { pool } from '../db';
-import { User } from '../interfaces/user.interface';
+import { User, UserWithCredentials } from '../interfaces/user.interface';
 
 export class UserRepository {
-    static async createUser(payload: User): Promise<User> {
+    static async createUser(payload: UserWithCredentials): Promise<User> {
         const query = {
-            text: 'INSERT INTO users(firstName, lastName, email) VALUES($1, $2, $3) RETURNING *',
-            values: [payload.firstName, payload.lastName, payload.email],
+            text: 'INSERT INTO users(firstName, lastName, email, password) VALUES($1, $2, $3, $4) RETURNING id, firstName, lastName, email, createdAt, updatedAt',
+            values: [payload.firstName, payload.lastName, payload.email, payload.password],
         }
         const user = await pool.query(query)
         return user.rows[0];
@@ -20,10 +20,18 @@ export class UserRepository {
         return users.rows;
     };
 
-    static async getUserbyId(userId: Number): Promise<User> {
+    static async getUser(payload: string|Number): Promise<User> {
+        let userId: Number, email: string;
+        if (typeof payload === 'string') {
+            email = payload;
+            userId = null
+        } else {
+            userId = payload;
+            email = null;
+        }
         const query = {
-            text: 'SELECT users.id FROM users WHERE id = $1',
-            values: [userId]
+            text: 'SELECT * FROM users WHERE email = $1 OR id = $2',
+            values: [email, userId]
         }
         const user = await pool.query(query);
         return user.rows[0];

@@ -1,22 +1,34 @@
+import jwt from 'jsonwebtoken';
 import request from 'supertest'
 import app from '../app'
 import { PostRepository } from './post.repository';
 
 jest.mock('./post.repository');
+jest.mock('jsonwebtoken');
 
 afterEach(() => {
     jest.resetAllMocks();
 });
 
 describe('Post Controller', () => {
+    const token = 'Bearer randomauthtoken';
+    const decodedToken = {
+        id: 1,
+        email: 'neddy@gmail.com',
+        iat: 1728727627
+    }
+
     describe('Create Comment', () => {
         afterEach(() => {
             jest.restoreAllMocks()
         });
         
         it('should return error if content is not provided', async () => {
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+
             const res = await request(app)
                 .post('/posts/1/comments')
+                .set({ Authorization: token })
                 .send();
 
             expect(res.status).toEqual(422);
@@ -25,8 +37,11 @@ describe('Post Controller', () => {
         });
         
         it('should return error if post provided does not exist', async () => {
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
+
             const res = await request(app)
                 .post('/posts/2/comments')
+                .set({ Authorization: token })
                 .send({
                     content: 'what are the relationships between the tables?'
                 });
@@ -51,11 +66,13 @@ describe('Post Controller', () => {
                 content: 'what are the relationships between the tables?'
             };
 
+            (jwt.verify as jest.Mock).mockResolvedValue(decodedToken);
             (PostRepository.getPostbyId as jest.Mock).mockResolvedValue(post);
             (PostRepository.createComment as jest.Mock).mockResolvedValue(comment);
 
             const res = await request(app)
                 .post('/posts/1/comments')
+                .set({ Authorization: token })
                 .send({
                     content: 'what are the relationships between the tables?'
                 });

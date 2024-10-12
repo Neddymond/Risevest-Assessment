@@ -6,3 +6,7 @@ export interface User {
     createdAt: Date,
     updatedAt: Date
 }
+
+export interface UserWithCredentials extends User {
+    password: string
+}
