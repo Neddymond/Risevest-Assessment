@@ -25,6 +25,10 @@ class ConfigService {
         return this.getValue('PORT', true);
     }
 
+    public getHost() {
+        return this.getValue('HOST', true);
+    }
+
     public isProduction() {
         const mode = this.getValue('NODE_ENV', false);
         return mode != 'DEV';
