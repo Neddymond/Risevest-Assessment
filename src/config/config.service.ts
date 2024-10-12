@@ -43,30 +43,10 @@ class ConfigService {
             port: Number(this.getValue('POSTGRES_PORT')),
             max: Number(this.getValue('POSTGRES_DB_POOL_SIZE')),
             idleTimeOutMillis: Number(this.getValue('POSTGRES_DB_POOL_CLIENT_IDLE_TIMEOUT')),
-            connectionTimeoutMillis: Number(this.getValue('POSTGRES_DB_POOL_CLIENT_CONNECTION_TIMEOUT'))
+            connectionTimeoutMillis: Number(this.getValue('POSTGRES_DB_POOL_CLIENT_CONNECTION_TIMEOUT')),
+            ssl: { requestCert: false, rejectUnauthorized: false }
         };
     }
-
-//   public getTypeOrmConfig(): TypeOrmModuleOptions {
-//     return {
-//       type: 'postgres',
-//       host: this.getValue('POSTGRES_HOST'),
-//       port: parseInt(this.getValue('POSTGRES_PORT')),
-//       username: this.getValue('POSTGRES_USER'),
-//       password: this.getValue('POSTGRES_PASSWORD'),
-//       database: this.getValue('POSTGRES_DB'),
-
-//       // entities: ["src/**/*.entity.{ts,js}"],
-//       entities: ["dist/**/*.entity.js"],
-
-//       migrationsTableName: 'migration',
-
-//       // migrations: ['src/db/migrations/*.ts'],
-//       migrations: ['dist/src/db/migrations/*.js'],
-
-//       ssl: this.isProduction(),
-//     };
-//   }
 }
 
 const configService = new ConfigService(process.env)
