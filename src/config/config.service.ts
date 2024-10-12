@@ -43,7 +43,8 @@ class ConfigService {
             port: Number(this.getValue('POSTGRES_PORT')),
             max: Number(this.getValue('POSTGRES_DB_POOL_SIZE')),
             idleTimeOutMillis: Number(this.getValue('POSTGRES_DB_POOL_CLIENT_IDLE_TIMEOUT')),
-            connectionTimeoutMillis: Number(this.getValue('POSTGRES_DB_POOL_CLIENT_CONNECTION_TIMEOUT'))
+            connectionTimeoutMillis: Number(this.getValue('POSTGRES_DB_POOL_CLIENT_CONNECTION_TIMEOUT')),
+            ssl: this.isProduction()
         };
     }
 
