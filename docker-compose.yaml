@@ -27,6 +27,7 @@ services:
     container_name: express-docker-postgres
     environment:
       - PORT=${PORT}
+      - NODE_ENV=development
     ports:
       - '3000:3000'
     depends_on:

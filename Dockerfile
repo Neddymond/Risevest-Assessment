@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+ENV NODE_ENV=production
+
 RUN npm run build
 
 RUN apt-get update && apt-get install -y wait-for-it
@@ -17,4 +19,4 @@ RUN chmod +x /usr/bin/wait-for-it
 # CMD ["wait-for-it", "postgres:5432", "--", "npm", "run", "typeorm:migration:run"]
 CMD ["wait-for-it", "postgres:5432"]
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then npm run start; else npm run dev; fi" ]
