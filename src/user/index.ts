@@ -7,6 +7,7 @@ const router = Router();
 
 router.get('/', User.getUsers);
 router.get('/:id/posts', validateUser, User.getPosts);
+router.get('/topUsers', User.getTopUsers);
 
 router.post('/', validateInputData(createUserSchema, 'payload'), User.createUser);
 router.post('/:id/posts', validateInputData(createPostSchema, 'payload'), validateUser, User.createPost);

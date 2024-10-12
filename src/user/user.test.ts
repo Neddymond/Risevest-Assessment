@@ -161,7 +161,6 @@ describe('User Controller', () => {
             const res = await request(app)
                 .get('/users/2/posts')
                 .send();
-                console.log('resxxz --> ', res.body);
 
             expect(res.status).toEqual(400);
             expect(res.body.status).toEqual(false);
@@ -192,6 +191,36 @@ describe('User Controller', () => {
 
             expect(res.status).toEqual(200);
             expect(res.body.message).toEqual('Posts fetched successfully');
+        });
+    });
+
+    describe('Get Top User', () => {
+        it('should fetch the top three users successfully', async () => {
+            const topUsers = [
+                {
+                    userId: 1,
+                    firstName: 'Chinedu',
+                    lastName: 'Ikechi',
+                    postCount: 1,
+                    latestComment: 'what are the relationships between the tables?'
+                },
+                {
+                    userid: 2,
+                    firstName: 'Eke',
+                    lastName: 'Urum',
+                    postCount: 1,
+                    latestComment: 'next interview stage'
+                }
+            ];
+
+            (UserRepository.getTopUsers as jest.Mock).mockResolvedValue(topUsers);
+
+            const res = await request(app)
+                .get('/users/topUsers')
+                .send();
+
+            expect(res.status).toEqual(200);
+            expect(res.body.message).toEqual('Top users fetched successfully');
         });
     });
 });

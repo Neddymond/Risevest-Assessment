@@ -3,7 +3,7 @@ import { PostRepository } from './post.repository';
 import { Helpers } from '../helpers/utility.helper';
 
 export class Post {
-    public static async createComment (req: Request, res: Response) {
+    static async createComment (req: Request, res: Response) {
         try {
             const postId = Number(req.params.postId);
             const post = await PostRepository.createComment(postId, req.body);
