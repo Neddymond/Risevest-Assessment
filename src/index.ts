@@ -2,7 +2,7 @@ import app from './app';
 import { configService } from './config/config.service';
 import { db } from './db';
 
-const port = configService.getPort();
+const port = Number(configService.getPort());
 const host = configService.getHost();
 
 app.listen(port, host, () => {
